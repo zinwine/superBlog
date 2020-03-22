@@ -3,36 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Post;
 use App\Category;
-use App\User;
-use Illuminate\Support\Facades\Auth;
 
-class PostController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-
-    public function allPosts()
-    {
-        // $allPosts = User::with('posts')->get();
-        // return $allPosts;
-        // $allPosts = Category::with('posts')->get();
-        // return $allPosts;
-        $allPosts = Post::with('category', 'user')->get();
-        return $allPosts;
-    }
-
     public function index()
     {
-        // $posts = Post::orderBy('id', 'desc')->get();
-        $posts = Post::with('category', 'user')->orderBy('id', 'desc')->get();
-        // $posts = Post::all();
+        $categories = Category::orderBy('id', 'desc')->get();
         return response()->json([
-            'posts' => $posts
+            'categories' => $categories
         ], 200);
     }
 
@@ -54,25 +38,20 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // $this->validate($request, [
-        //     'title' => 'required| min:3| max:50',
-        //     ''
-        // ]);
+        // $category = New Category();
+        // $category->cat_name = $request->cat_name;
+        // $category->save();
 
-        $title = $request->title;
-        $description = $request->description;
-        $cat_id = $request->cat_id;
-        $user_id = Auth::user()->id;
-
-        // return $title . $description . $cat_id . $user_id;
-
-        Post::create([
-            'title' => $title,
-            'description' => $description,
-            'cat_id' => $cat_id,
-            'user_id' => $user_id
+        $this->validate($request, [
+            'cat_name' => 'required| min:3| max:50'
         ]);
-        return ['message' => 'OK, Post Saved'];
+
+        $cat_name = $request->cat_name;
+
+        Category::create([
+            'cat_name' => $cat_name
+        ]);
+        return ['message' => 'OK, Category Saved'];
     }
 
     /**
@@ -94,9 +73,9 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        $post = Post::find($id);
+        $category = Category::find($id);
         return response()-> json([
-            'post' => $post 
+            'category' => $category 
         ], 200);
     }
 
@@ -109,7 +88,16 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'cat_name' => 'required| min:3| max:50'
+        ]);
+
+        $category = Category::where('id', $id)->firstOrFail();
+        $category->cat_name = $request->cat_name;
+        // $category->save(); // Same Same
+        $category->update();
+        
+        return ['message' => 'OK, Category Updated'];
     }
 
     /**
@@ -120,8 +108,8 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        $post = Post::find($id);
-        $post->delete();
-        return ['message', 'Post Deleted Succefully'];
+        $category = Category::find($id);
+        $category->delete();
+        return ['message', 'Category Deleted Succefully'];
     }
 }

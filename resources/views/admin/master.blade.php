@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 3 | Blank Page</title>
+  <title>Super | Blog</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -173,7 +173,7 @@
             </router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/post" class="nav-link">
+            <router-link to="/post-list" class="nav-link">
               <i class="nav-icon fa fa-th"></i>
               <p>
                 Post
