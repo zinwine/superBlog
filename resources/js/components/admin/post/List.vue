@@ -10,7 +10,7 @@
               <h3 class="card-title">Post List</h3>
               <div class="card-tools">
                   <button class="btn btn-primary">
-                    <router-link to="/add-post" class="text-white">Add New Post</router-link>
+                    <router-link to="/add-post" class="text-white"><i class="fa fa-plus"></i> Add New Post</router-link>
                     </button>
               </div>
             </div>
@@ -38,10 +38,10 @@
                         <td v-if="(post.title).length > 15">{{ post.title | sortlength(20, " ----") }}</td>
                         <td v-else>{{ post.title }}</td>
                         <td>{{ post.description | sortlength(40, " .....")}}</td>
-                        <td><img :src="post.photo" alt="" width="80" height="50"></td>
+                        <td><img :src="postPhoto(post.photo)" alt="" width="80" height="50"></td>
                         <td>
-                            <a href="#ß" class="btn btn-warning" style="color: #108c2b">Edit</a>
-                            <a href="#" class="btn btn-danger">Delete</a>
+                            <router-link :to="`/edit-post/${post.id}`" class="btn btn-warning" style="color: #108c2b"><i class="fa fa-edit"></i></router-link>
+                            <a href="#" class="btn btn-danger" @click.prevent="deleteConfirmPost(post.id)"><i class="fa fa-trash"></i></a>
                         </td>
                     </tr>
     
@@ -70,7 +70,39 @@ export default {
       }
     },
     methods: {
-    }
+      postPhoto(img){
+        return 'uploads/' + img;
+      },
+       deleteConfirmPost(id){
+        Swal.fire({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+          if (result.value) {
+          
+            axios.get('/post/' + id)
+            .then(() => {
+              this.$store.dispatch("allPost")
+              // Toast.fire({
+              //   icon: 'success',
+              //   title: 'Category Deleted successfully'
+              // })
+                Swal.fire(
+                'Category Deleted successfully!',
+                'Your file has been deleted.',
+                'success'
+              )
+      
+            })
+          }
+        })
+      },
+    } 
 }
 </script>
 

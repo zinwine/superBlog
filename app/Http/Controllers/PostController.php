@@ -7,6 +7,7 @@ use App\Post;
 use App\Category;
 use App\User;
 use Illuminate\Support\Facades\Auth;
+use Image;
 
 class PostController extends Controller
 {
@@ -54,10 +55,19 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        // $this->validate($request, [
-        //     'title' => 'required| min:3| max:50',
-        //     ''
-        // ]);
+        $this->validate($request, [
+            'title' => 'required| min:3| max:50',
+            'description' => 'required| min:5',
+            'cat_id' => 'required',
+        ]);
+
+        $strpos = strpos($request->photo, ';');
+        $sub = substr($request->photo, 0, $strpos);
+        $ex = explode('/', $sub)[1];
+        $name = time() . "." . $ex;
+        $img = Image::make($request->photo)->resize(200, 200);
+        $upload_path = public_path() . "/uploads/";
+        $img->save($upload_path . $name);
 
         $title = $request->title;
         $description = $request->description;
@@ -70,7 +80,8 @@ class PostController extends Controller
             'title' => $title,
             'description' => $description,
             'cat_id' => $cat_id,
-            'user_id' => $user_id
+            'user_id' => $user_id,
+            'photo' => $name
         ]);
         return ['message' => 'OK, Post Saved'];
     }
@@ -109,7 +120,43 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'title' => 'required| min:3| max:50',
+            'description' => 'required| min:5',
+            'cat_id' => 'required',
+        ]);
+
+        $post = Post::where('id', $id)->firstOrFail();
+        $post->title = $request->title;
+        $post->description = $request->description;
+        $post->cat_id = $request->cat_id;
+        $post->user_id = Auth::user()->id;
+
+        if($post->photo == $request->photo){
+            $name = $request->photo;
+        }else{
+            $strpos = strpos($request->photo, ';');
+            $sub = substr($request->photo, 0, $strpos);
+            $ex = explode('/', $sub)[1];
+            $name = time() . "." . $ex;
+            $img = Image::make($request->photo)->resize(200, 200);
+            $upload_path = public_path() . "/uploads/";
+
+            $photo = $upload_path . $post->photo;
+            if(file_exists($photo)){
+                @unlink($photo);
+            }
+
+            $img->save($upload_path . $name);
+
+        }
+        
+        $post->photo = $name;
+
+        // $post->save(); // Same Same
+        $post->update();
+
+        return ['message' => 'OK, Post Saved'];
     }
 
     /**
@@ -121,6 +168,11 @@ class PostController extends Controller
     public function destroy($id)
     {
         $post = Post::find($id);
+        $photo_path = public_path() . "/uploads/";
+        $photo = $photo_path . $post->photo;
+        if(file_exists($photo)){
+            @unlink($photo);
+        }
         $post->delete();
         return ['message', 'Post Deleted Succefully'];
     }

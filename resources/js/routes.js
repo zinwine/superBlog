@@ -5,7 +5,10 @@ import EditCategory from './components/admin/category/Edit.vue'
 import PostList from './components/admin/post/List.vue'
 import AddPost from './components/admin/post/New.vue'
 import EditPost from './components/admin/post/Edit.vue'
-import Ex from './components/ExampleComponent.vue'
+import Index from './components/public/Home.vue'
+import Blog from './components/public/blog/BlogPost.vue'
+import SingleBlog from './components/public/blog/SingleBlog.vue'
+
 
 export const routes = [
   { 
@@ -33,7 +36,29 @@ export const routes = [
     component: AddPost
   },
   { 
-    path: '/edit-post', 
+    path: '/edit-post/:postid', 
     component: EditPost
   },
+
+  // ********** Frontend **************
+
+  { 
+    path: '/', 
+    component: Index
+  },
+  { 
+    path: '/blog', 
+    component: Blog
+  },
+  { 
+    path: '/single-blog/:blogpostid', 
+    component: SingleBlog
+  },
+  { 
+    path: '/category-post/:id', 
+    component: Blog
+  },
+
+
+
 ]

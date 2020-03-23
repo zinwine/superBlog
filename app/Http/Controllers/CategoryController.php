@@ -112,4 +112,14 @@ class CategoryController extends Controller
         $category->delete();
         return ['message', 'Category Deleted Succefully'];
     }
+
+    public function selectDelete($id)
+    {
+        $id_ary = explode(',', $id);
+        foreach($id_ary as $id){
+            $category = Category::find($id);
+            $category->delete();
+        }
+        return ['message', 'Category Deleted Succefully'];
+    }
 }

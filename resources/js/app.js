@@ -30,6 +30,7 @@ import {routes} from './routes'
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('admin-master', require('./components/admin/Master.vue').default);
+Vue.component('publilc-master', require('./components/public/Master.vue').default);
 
 import { Form, HasError, AlertError } from 'vform'
 
